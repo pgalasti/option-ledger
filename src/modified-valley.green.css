@@ -193,7 +193,26 @@ a:hover {
 }
 
 .card-open-positions {
-  width: 50%;
+  width: 60%;
+  max-height: 600px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) rgba(255, 255, 255, 0.05);
+}
+
+.card-open-positions::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card-open-positions::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.card-open-positions::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.05);
 }
 
 .footer {
@@ -219,4 +238,122 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+}
+
+/* Position Summary Component */
+.position-summary-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  transition: all var(--transition-fast);
+}
+
+.position-summary-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.position-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.75rem;
+}
+
+.position-symbol-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.position-symbol {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.position-name {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.position-type-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(52, 235, 94, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(52, 235, 94, 0.2);
+  font-weight: 600;
+}
+
+.badges-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.badge-expired {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(235, 52, 52, 0.1);
+  color: #eb3434;
+  border: 1px solid rgba(235, 52, 52, 0.2);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.position-summary-card.expired {
+  opacity: 0.7;
+  border-color: rgba(235, 52, 52, 0.2);
+}
+
+.position-summary-card.expired:hover {
+  opacity: 1;
+  border-color: #eb3434;
+}
+
+.days-remaining.expired-text {
+  color: #eb3434;
+}
+
+.position-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.days-remaining {
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  margin-left: 0.25rem;
+}
+
+.detail-value.price {
+  color: var(--color-secondary);
+  font-weight: 700;
 }
