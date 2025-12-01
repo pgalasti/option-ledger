@@ -248,6 +248,7 @@ a:hover {
   padding: 1rem;
   margin-bottom: 0.75rem;
   transition: all var(--transition-fast);
+  cursor: pointer;
 }
 
 .position-summary-card:hover {
@@ -275,6 +276,16 @@ a:hover {
   font-weight: 700;
   color: var(--color-primary);
   line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.strike-price {
+  font-size: 1rem;
+  color: var(--color-text-main);
+  font-weight: 500;
+  opacity: 0.8;
 }
 
 .position-name {
