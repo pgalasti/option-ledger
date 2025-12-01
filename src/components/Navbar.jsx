@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Navbar = () => {
+const Navbar = ({ onNewTradeClick }) => {
     return (
         <nav className="nav-bar glass-panel" style={{ margin: 0, borderRadius: 0, borderTop: 'none', borderLeft: 'none', borderRight: 'none' }}>
             <div className="nav-logo">
@@ -10,7 +10,7 @@ const Navbar = () => {
                 <a href="#">History</a>
                 <a href="#">Analysis</a>
             </div>
-            <button className="btn btn-primary" onClick={() => alert('New trade window')}>New Trade</button>
+            <button className="btn btn-primary" onClick={onNewTradeClick}>New Trade</button>
         </nav>
     );
 };

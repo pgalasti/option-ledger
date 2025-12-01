@@ -51,3 +51,26 @@ export const positions = [
         strikePrice: 105
     }
 ];
+
+export const companies = [
+    { symbol: 'AAPL', name: 'Apple Inc.' },
+    { symbol: 'MSFT', name: 'Microsoft Corporation' },
+    { symbol: 'GOOGL', name: 'Alphabet Inc.' },
+    { symbol: 'AMZN', name: 'Amazon.com, Inc.' },
+    { symbol: 'NVDA', name: 'NVIDIA Corporation' },
+    { symbol: 'TSLA', name: 'Tesla, Inc.' },
+    { symbol: 'META', name: 'Meta Platforms, Inc.' },
+    { symbol: 'AMD', name: 'Advanced Micro Devices, Inc.' },
+    { symbol: 'NFLX', name: 'Netflix, Inc.' },
+    { symbol: 'INTC', name: 'Intel Corporation' },
+    { symbol: 'PYPL', name: 'PayPal Holdings, Inc.' },
+    { symbol: 'ADBE', name: 'Adobe Inc.' },
+    { symbol: 'CRM', name: 'Salesforce, Inc.' },
+    { symbol: 'CSCO', name: 'Cisco Systems, Inc.' },
+    { symbol: 'PEP', name: 'PepsiCo, Inc.' },
+    { symbol: 'KO', name: 'The Coca-Cola Company' },
+    { symbol: 'DIS', name: 'The Walt Disney Company' },
+    { symbol: 'WMT', name: 'Walmart Inc.' },
+    { symbol: 'JPM', name: 'JPMorgan Chase & Co.' },
+    { symbol: 'V', name: 'Visa Inc.' }
+];

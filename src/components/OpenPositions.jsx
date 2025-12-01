@@ -1,7 +1,6 @@
 import PositionSummary from './PositionSummary';
-import { positions } from '../dummyData';
 
-const OpenPositions = () => {
+const OpenPositions = ({ positions }) => {
 
     return (
         <div>

@@ -1,11 +1,11 @@
 import React from 'react';
 import OpenPositions from './OpenPositions';
 
-const Dashboard = () => {
+const Dashboard = ({ positions }) => {
     return (
         <div className="dashboard-grid">
             <div className="dashboard-left">
-                <OpenPositions />
+                <OpenPositions positions={positions} />
             </div>
             <div className="dashboard-right">
             </div>
