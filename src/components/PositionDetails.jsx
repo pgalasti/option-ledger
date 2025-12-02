@@ -1,32 +1,55 @@
 import React from 'react';
 
-const PositionDetails = ({ position }) => {
+const PositionDetails = ({ position, onEdit, onDelete }) => {
     if (!position) return null;
 
-    const { symbol, name, type, sellDate, expirationDate, priceSold, strikePrice, fees } = position;
+    const { id, symbol, name, type, sellDate, expirationDate, priceSold, strikePrice, fees } = position;
     const totalPremium = ((priceSold * 100) - (fees || 0)).toFixed(2);
 
     const daysUntil = Math.floor((new Date(expirationDate) - new Date()) / (1000 * 60 * 60 * 24));
     const isExpired = daysUntil < 0;
 
+    const handleDelete = () => {
+        if (window.confirm(`Are you sure you want to delete the position for ${symbol}?`)) {
+            onDelete(id);
+        }
+    };
+
     return (
         <div className={`card ${isExpired ? 'expired' : ''}`} style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '1.5rem', borderColor: isExpired ? '#eb3434' : 'transparent' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
-                <button
-                    className="btn"
-                    style={{
-                        padding: '0.25rem 0.75rem',
-                        fontSize: '0.8rem',
-                        border: '1px solid #34aeeb',
-                        background: 'rgba(52, 174, 235, 0.1)',
-                        color: '#34aeeb',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        justifySelf: 'start'
-                    }}
-                >
-                    Edit
-                </button>
+                <div style={{ display: 'flex', gap: '0.5rem', justifySelf: 'start' }}>
+                    <button
+                        className="btn"
+                        style={{
+                            padding: '0.25rem 0.75rem',
+                            fontSize: '0.8rem',
+                            border: '1px solid #34aeeb',
+                            background: 'rgba(52, 174, 235, 0.1)',
+                            color: '#34aeeb',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                        }}
+                        onClick={() => onEdit(position)}
+                    >
+                        ✏️ Edit
+                    </button>
+                    <button
+                        className="btn"
+                        style={{
+                            padding: '0.25rem 0.75rem',
+                            fontSize: '0.8rem',
+                            border: '1px solid #ef4444',
+                            background: 'rgba(239, 68, 68, 0.1)',
+                            color: '#ef4444',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                        }}
+                        onClick={handleDelete}
+                    >
+                        🗑️ Delete
+                    </button>
+                </div>
                 <div style={{ textAlign: 'center', justifySelf: 'center' }}>
                     <h2 style={{ margin: 0, fontSize: '1.5rem' }}>{name} ({symbol})</h2>
                 </div>
@@ -68,19 +91,6 @@ const PositionDetails = ({ position }) => {
                     className="btn"
                     style={{
                         flex: 1,
-                        border: '1px solid #34aeeb',
-                        background: 'rgba(52, 174, 235, 0.1)',
-                        color: '#34aeeb',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s'
-                    }}
-                >
-                    Mark Assigned
-                </button>
-                <button
-                    className="btn"
-                    style={{
-                        flex: 1,
                         border: '1px solid #ef4444',
                         background: 'rgba(239, 68, 68, 0.1)',
                         color: '#ef4444',
@@ -89,6 +99,19 @@ const PositionDetails = ({ position }) => {
                     }}
                 >
                     Close Position
+                </button>
+                <button
+                    className="btn"
+                    style={{
+                        flex: 1,
+                        border: '1px solid #34aeeb',
+                        background: 'rgba(52, 174, 235, 0.1)',
+                        color: '#34aeeb',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                    }}
+                >
+                    Mark Assigned
                 </button>
                 <button
                     className="btn"

@@ -1,6 +1,6 @@
 import PositionSummary from './PositionSummary';
 
-const OpenPositions = ({ positions, onNewTradeClick, onPositionClick }) => {
+const OpenPositions = ({ positions, onNewTradeClick, onPositionClick, selectedPositionId }) => {
 
     if (!positions || positions.length === 0) {
         return (
@@ -26,7 +26,10 @@ const OpenPositions = ({ positions, onNewTradeClick, onPositionClick }) => {
             <div className="positions-list" style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem' }}>
                 {positions.map(position => (
                     <div key={position.id} onClick={() => onPositionClick(position)} style={{ cursor: 'pointer' }}>
-                        <PositionSummary position={position} />
+                        <PositionSummary
+                            position={position}
+                            isSelected={position.id === selectedPositionId}
+                        />
                     </div>
                 ))}
             </div>

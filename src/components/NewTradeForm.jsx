@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TradeType } from '../model/TradeType';
 import { CompanyService } from '../services/http/CompanyService';
 
-function NewTradeForm({ isOpen, onClose, onSave }) {
+function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
     const [symbol, setSymbol] = useState('');
     const [filteredCompanies, setFilteredCompanies] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -14,6 +14,21 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
     const [fees, setFees] = useState(0.65);
 
     const [selectedCompany, setSelectedCompany] = useState(null);
+
+    useEffect(() => {
+        if (initialData) {
+            setSymbol(initialData.symbol);
+            setSelectedCompany({ symbol: initialData.symbol, name: initialData.name });
+            setType(initialData.type === TradeType.COVERED_CALL ? 'Call' : 'Put');
+            setStrikePrice(initialData.strikePrice);
+            setExpirationDate(initialData.expirationDate);
+            setSellDate(initialData.sellDate);
+            setPremium(initialData.priceSold);
+            setFees(initialData.fees || 0);
+        } else {
+            resetFormState();
+        }
+    }, [initialData, isOpen]);
 
     useEffect(() => {
         const fetchCompanies = async () => {
@@ -51,8 +66,8 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
             return;
         }
 
-        const newTrade = {
-            id: Date.now(), // DateTime in milliseconds for unique ID
+        const tradeData = {
+            id: initialData ? initialData.id : Date.now(),
             symbol: selectedCompany.symbol,
             name: selectedCompany.name,
             type: type === 'Call' ? TradeType.COVERED_CALL : TradeType.SHORT_PUT,
@@ -62,11 +77,16 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
             strikePrice: parseFloat(strikePrice),
             fees: parseFloat(fees)
         };
-        onSave(newTrade);
-        resetForm();
+
+        if (initialData) {
+            onUpdate(tradeData);
+        } else {
+            onSave(tradeData);
+        }
+        resetFormState();
     };
 
-    const resetForm = () => {
+    const resetFormState = () => {
         setSymbol('');
         setSelectedCompany(null);
         setType('Call');
@@ -75,18 +95,22 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
         setSellDate(new Date().toISOString().split('T')[0]);
         setPremium('');
         setFees(0.65);
+    };
+
+    const handleClose = () => {
+        resetFormState();
         onClose();
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="new-trade-overlay" onClick={onClose}>
+        <div className="new-trade-overlay" onClick={handleClose}>
             <div className="new-trade-sidebar" onClick={e => e.stopPropagation()}>
 
                 <div className="sidebar-header">
-                    <h2 className="sidebar-title">New Trade</h2>
-                    <button onClick={onClose} className="close-btn">&times;</button>
+                    <h2 className="sidebar-title">{initialData ? 'Edit Trade' : 'New Trade'}</h2>
+                    <button onClick={handleClose} className="close-btn">&times;</button>
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -207,7 +231,7 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
                     <div className="form-actions">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="btn-cancel"
                         >
                             Cancel
@@ -216,7 +240,7 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
                             type="submit"
                             className="btn-save"
                         >
-                            Save Trade
+                            {initialData ? 'Update Trade' : 'Save Trade'}
                         </button>
                     </div>
 

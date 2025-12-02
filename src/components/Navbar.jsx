@@ -9,6 +9,8 @@ const Navbar = ({ onNewTradeClick }) => {
             <div className="nav-links">
                 <a href="#">History</a>
                 <a href="#">Analysis</a>
+                <a href="#">Export</a>
+                <a className="warning" href="#">Clear Data</a>
             </div>
             <button className="btn btn-primary" onClick={onNewTradeClick}>New Trade</button>
         </nav>

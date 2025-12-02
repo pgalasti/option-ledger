@@ -13,7 +13,8 @@
  - ~~Implement a details card on right side of dashboard when a position is being examined.~~
  - ~~Add in trade fees for opening a position.~~
  - ~~Add edit details for a position~~
- - Add a 'Delete' position action in detail card
+ - ~~Add a 'Delete' position action in detail card~~
+ - Add a "Expired Worthless" button to the position details card
  - Logic to handle expired positions (click in open positions and specify how it was closed)
   - History
  - - Display Opens/Close
@@ -24,3 +25,5 @@
  - - Implement Time Period Analysis
 - - - Profit/Loss
 - Technical -- Write a class repository wrappers around persistence instead of explicit persistence calls
+- Export to CSV feature
+- Clear Data

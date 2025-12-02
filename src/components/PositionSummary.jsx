@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PositionSummary = ({ position }) => {
+const PositionSummary = ({ position, isSelected }) => {
     const { symbol, name, type, sellDate, expirationDate, priceSold, strikePrice } = position;
 
     const daysUntil = Math.floor((new Date(expirationDate) - new Date()) / (1000 * 60 * 60 * 24));
@@ -9,7 +9,7 @@ const PositionSummary = ({ position }) => {
     const strikeSuffix = type.toLowerCase().includes('call') ? 'C' : 'P';
 
     return (
-        <div className={`position-summary-card ${isExpired ? 'expired' : ''}`}>
+        <div className={`position-summary-card ${isExpired ? 'expired' : ''} ${isSelected ? 'selected' : ''}`}>
             <div className="position-header">
                 <div className="position-symbol-group">
                     <h3 className="position-symbol">

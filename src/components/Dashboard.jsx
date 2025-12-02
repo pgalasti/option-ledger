@@ -2,8 +2,15 @@ import React, { useState } from 'react';
 import OpenPositions from './OpenPositions';
 import PositionDetails from './PositionDetails';
 
-const Dashboard = ({ positions, onNewTradeClick }) => {
-    const [selectedPosition, setSelectedPosition] = useState(null);
+const Dashboard = ({ positions, onNewTradeClick, onEditPosition, onDeletePosition }) => {
+    const [selectedPositionId, setSelectedPositionId] = useState(null);
+
+    const selectedPosition = positions.find(p => p.id === selectedPositionId);
+
+    // Clear selection if the selected position is deleted (not found in positions)
+    if (selectedPositionId && !selectedPosition) {
+        setSelectedPositionId(null);
+    }
 
     return (
         <div className="dashboard-grid" style={{ height: '100%' }}>
@@ -11,11 +18,18 @@ const Dashboard = ({ positions, onNewTradeClick }) => {
                 <OpenPositions
                     positions={positions}
                     onNewTradeClick={onNewTradeClick}
-                    onPositionClick={setSelectedPosition}
+                    onPositionClick={(position) => setSelectedPositionId(position.id)}
+                    selectedPositionId={selectedPositionId}
                 />
             </div>
             <div className="dashboard-right">
-                {selectedPosition && <PositionDetails position={selectedPosition} />}
+                {selectedPosition && (
+                    <PositionDetails
+                        position={selectedPosition}
+                        onEdit={onEditPosition}
+                        onDelete={onDeletePosition}
+                    />
+                )}
             </div>
         </div>
     );

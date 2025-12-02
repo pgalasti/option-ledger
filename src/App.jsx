@@ -15,6 +15,7 @@ function App() {
     return saved || [];
   });
   const [isNewTradeOpen, setIsNewTradeOpen] = useState(false);
+  const [editingPosition, setEditingPosition] = useState(null);
 
   const handleSaveTrade = (newTrade) => {
     const newPositions = [newTrade, ...positions];
@@ -23,18 +24,57 @@ function App() {
     setIsNewTradeOpen(false);
   };
 
+  const handleEditPosition = (position) => {
+    setEditingPosition(position);
+    setIsNewTradeOpen(true);
+  };
+
+  const handleUpdateTrade = (updatedTrade) => {
+    const newPositions = positions.map(p => p.id === updatedTrade.id ? updatedTrade : p);
+    setPositions(newPositions);
+    storage.save(POSITIONS_KEY, newPositions);
+    setIsNewTradeOpen(false);
+    setEditingPosition(null);
+  };
+
+  const handleDeletePosition = (positionId) => {
+    const newPositions = positions.filter(p => p.id !== positionId);
+    setPositions(newPositions);
+    storage.save(POSITIONS_KEY, newPositions);
+    if (editingPosition && editingPosition.id === positionId) {
+      setEditingPosition(null);
+      setIsNewTradeOpen(false);
+    }
+  };
+
   return (
     <div className="app-container">
-      <Navbar onNewTradeClick={() => setIsNewTradeOpen(true)} />
+      <Navbar onNewTradeClick={() => {
+        setEditingPosition(null);
+        setIsNewTradeOpen(true);
+      }} />
 
       <main className="app-main" style={{ paddingTop: '2rem', paddingLeft: '2rem', paddingRight: '2rem', paddingBottom: '2rem' }}>
-        <Dashboard positions={positions} onNewTradeClick={() => setIsNewTradeOpen(true)} />
+        <Dashboard
+          positions={positions}
+          onNewTradeClick={() => {
+            setEditingPosition(null);
+            setIsNewTradeOpen(true);
+          }}
+          onEditPosition={handleEditPosition}
+          onDeletePosition={handleDeletePosition}
+        />
       </main>
 
       <NewTradeForm
         isOpen={isNewTradeOpen}
-        onClose={() => setIsNewTradeOpen(false)}
+        onClose={() => {
+          setIsNewTradeOpen(false);
+          setEditingPosition(null);
+        }}
         onSave={handleSaveTrade}
+        onUpdate={handleUpdateTrade}
+        initialData={editingPosition}
       />
 
       <Footer />

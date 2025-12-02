@@ -267,6 +267,12 @@ a:hover {
   transform: translateY(-2px);
 }
 
+.position-summary-card.selected {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px rgba(52, 235, 94, 0.2);
+}
+
 .position-header {
   display: flex;
   justify-content: space-between;
@@ -340,6 +346,7 @@ a:hover {
   border-color: #eb3434;
 }
 
+.warning,
 .days-remaining.expired-text {
   color: #eb3434;
 }
