@@ -3,16 +3,23 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Dashboard from './components/Dashboard';
 import NewTradeForm from './components/NewTradeForm';
-import { positions as initialPositions } from './dummyData';
+
+import { LocalDataPersistence } from './services/storage/LocalDataPersistence';
+
+const storage = new LocalDataPersistence();
+const POSITIONS_KEY = 'positions';
 
 function App() {
-  const [positions, setPositions] = useState(initialPositions);
+  const [positions, setPositions] = useState(() => {
+    const saved = storage.load(POSITIONS_KEY);
+    return saved || [];
+  });
   const [isNewTradeOpen, setIsNewTradeOpen] = useState(false);
 
   const handleSaveTrade = (newTrade) => {
-    setPositions([newTrade, ...positions]);
-    // I'll need to write a service to persist the trade here.
-    // I'll need to make it generic like interface so it can use for local storage or a back-end API
+    const newPositions = [newTrade, ...positions];
+    setPositions(newPositions);
+    storage.save(POSITIONS_KEY, newPositions);
     setIsNewTradeOpen(false);
   };
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TradeType } from '../model/TradeType';
-import { CompanyService } from '../services/CompanyService';
+import { CompanyService } from '../services/http/CompanyService';
 
 function NewTradeForm({ isOpen, onClose, onSave }) {
     const [symbol, setSymbol] = useState('');
@@ -31,7 +31,7 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
             } else {
                 setFilteredCompanies([]);
             }
-        }, 500); // Debounce 500ms
+        }, 500);  // Debounce 500ms
 
         return () => clearTimeout(timeoutId);
     }, [symbol]);
