@@ -15,6 +15,7 @@
  - ~~Add edit details for a position~~
  - ~~Add a 'Delete' position action in detail card~~
  - ~~Add a "Expired Worthless" button to the position details card~~
+ - ~~Add a persistence wrapper for open positions~~
  - Add a persistence ledger for adding a position
  - Implement logic to close a position
  - - Ensure Persisted

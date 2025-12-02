@@ -4,23 +4,22 @@ import Footer from './components/Footer';
 import Dashboard from './components/Dashboard';
 import NewTradeForm from './components/NewTradeForm';
 
-import { LocalDataPersistence } from './services/storage/LocalDataPersistence';
+import { LocalDataPersistence } from './services/util/LocalDataPersistence';
+import { PositionRepo } from './services/storage/PositionRepo';
 
-const storage = new LocalDataPersistence();
-const POSITIONS_KEY = 'positions';
+const persistence = new LocalDataPersistence();
+const repo = new PositionRepo(persistence);
 
 function App() {
   const [positions, setPositions] = useState(() => {
-    const saved = storage.load(POSITIONS_KEY);
-    return saved || [];
+    return repo.load();
   });
   const [isNewTradeOpen, setIsNewTradeOpen] = useState(false);
   const [editingPosition, setEditingPosition] = useState(null);
 
   const handleSaveTrade = (newTrade) => {
-    const newPositions = [newTrade, ...positions];
+    const newPositions = repo.save(newTrade);
     setPositions(newPositions);
-    storage.save(POSITIONS_KEY, newPositions);
     setIsNewTradeOpen(false);
   };
 
@@ -30,17 +29,15 @@ function App() {
   };
 
   const handleUpdateTrade = (updatedTrade) => {
-    const newPositions = positions.map(p => p.id === updatedTrade.id ? updatedTrade : p);
+    const newPositions = repo.save(updatedTrade);
     setPositions(newPositions);
-    storage.save(POSITIONS_KEY, newPositions);
     setIsNewTradeOpen(false);
     setEditingPosition(null);
   };
 
   const handleDeletePosition = (positionId) => {
-    const newPositions = positions.filter(p => p.id !== positionId);
+    const newPositions = repo.delete(positionId);
     setPositions(newPositions);
-    storage.save(POSITIONS_KEY, newPositions);
     if (editingPosition && editingPosition.id === positionId) {
       setEditingPosition(null);
       setIsNewTradeOpen(false);

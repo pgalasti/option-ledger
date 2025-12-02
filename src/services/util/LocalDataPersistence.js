@@ -1,4 +1,4 @@
-import { Persistence } from '../Persistence.js';
+import { Persistence } from './Persistence.js';
 
 // I should actually write a class around this to make it more generic and given a flag
 // to switch between local storage and API
