@@ -9,10 +9,11 @@
  - - ~~Short Put~~
  - ~~Fetch companies from some API~~
  - ~~Implement interface to persist trades (local storage for now but interface for back-end later)~~
- - Implement a 'No Positions' default state in open positions if there is no open position.
+ - ~~Implement a 'No Positions' default state in open positions if there is no open position.~~
+ - ~~Implement a details card on right side of dashboard when a position is being examined.~~
+ - Add in trade fees for opening a position.
  - Logic to handle expired positions (click in open positions and specify how it was closed)
- - Implement a details card on right side of dashboard when a position is being examined.
- - History
+  - History
  - - Display Opens/Close
  - Analysis
  - - Implement Symbol Search Analysis
