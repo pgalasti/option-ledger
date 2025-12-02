@@ -1,11 +1,11 @@
 import React from 'react';
 import OpenPositions from './OpenPositions';
 
-const Dashboard = ({ positions }) => {
+const Dashboard = ({ positions, onNewTradeClick }) => {
     return (
         <div className="dashboard-grid">
             <div className="dashboard-left">
-                <OpenPositions positions={positions} />
+                <OpenPositions positions={positions} onNewTradeClick={onNewTradeClick} />
             </div>
             <div className="dashboard-right">
             </div>
