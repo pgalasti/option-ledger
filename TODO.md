@@ -11,8 +11,9 @@
  - ~~Implement interface to persist trades (local storage for now but interface for back-end later)~~
  - ~~Implement a 'No Positions' default state in open positions if there is no open position.~~
  - ~~Implement a details card on right side of dashboard when a position is being examined.~~
- - Add in trade fees for opening a position.
- - Add edit details for a position
+ - ~~Add in trade fees for opening a position.~~
+ - ~~Add edit details for a position~~
+ - Add a 'Delete' position action in detail card
  - Logic to handle expired positions (click in open positions and specify how it was closed)
   - History
  - - Display Opens/Close
