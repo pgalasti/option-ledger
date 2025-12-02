@@ -11,6 +11,8 @@ function App() {
 
   const handleSaveTrade = (newTrade) => {
     setPositions([newTrade, ...positions]);
+    // I'll need to write a service to persist the trade here.
+    // I'll need to make it generic like interface so it can use for local storage or a back-end API
     setIsNewTradeOpen(false);
   };
 

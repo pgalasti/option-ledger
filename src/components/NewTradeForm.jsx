@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { companies } from '../dummyData';
 import { TradeType } from '../model/TradeType';
+import { CompanyService } from '../services/CompanyService';
 
 function NewTradeForm({ isOpen, onClose, onSave }) {
     const [symbol, setSymbol] = useState('');
@@ -12,29 +12,48 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
     const [sellDate, setSellDate] = useState(new Date().toISOString().split('T')[0]);
     const [premium, setPremium] = useState('');
 
+    const [selectedCompany, setSelectedCompany] = useState(null);
+
     useEffect(() => {
-        if (symbol) {
-            const filtered = companies.filter(c =>
-                c.symbol.toLowerCase().includes(symbol.toLowerCase()) ||
-                c.name.toLowerCase().includes(symbol.toLowerCase())
-            );
-            setFilteredCompanies(filtered);
-        } else {
-            setFilteredCompanies([]);
-        }
+        const fetchCompanies = async () => {
+            if (!symbol) {
+                setFilteredCompanies([]);
+                return;
+            }
+
+            const companies = await CompanyService.searchCompanies(symbol);
+            setFilteredCompanies(companies);
+        };
+
+        const timeoutId = setTimeout(() => {
+            if (symbol.length > 1) { // Only search if more than 1 char
+                fetchCompanies();
+            } else {
+                setFilteredCompanies([]);
+            }
+        }, 500); // Debounce 500ms
+
+        return () => clearTimeout(timeoutId);
     }, [symbol]);
 
     const handleSelectCompany = (company) => {
         setSymbol(company.symbol);
+        setSelectedCompany(company);
         setShowSuggestions(false);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!selectedCompany) {
+            alert("Please select a valid company from the list.");
+            return;
+        }
+
         const newTrade = {
             id: Date.now(), // DateTime in milliseconds for unique ID
-            symbol: symbol.toUpperCase(),
-            name: companies.find(c => c.symbol === symbol.toUpperCase())?.name || symbol.toUpperCase(),
+            symbol: selectedCompany.symbol,
+            name: selectedCompany.name,
             type: type === 'Call' ? TradeType.COVERED_CALL : TradeType.SHORT_PUT,
             sellDate,
             expirationDate,
@@ -47,6 +66,7 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
 
     const resetForm = () => {
         setSymbol('');
+        setSelectedCompany(null);
         setType('Call');
         setStrikePrice('');
         setExpirationDate('');
@@ -73,7 +93,11 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
                         <input
                             type="text"
                             value={symbol}
-                            onChange={(e) => { setSymbol(e.target.value); setShowSuggestions(true); }}
+                            onChange={(e) => {
+                                setSymbol(e.target.value);
+                                setSelectedCompany(null); // Clear selection on type
+                                setShowSuggestions(true);
+                            }}
                             placeholder="Search Symbol or Name"
                             className="form-input"
                             required
