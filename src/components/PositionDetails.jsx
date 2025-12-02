@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PositionDetails = ({ position, onEdit, onDelete }) => {
+const PositionDetails = ({ position, onEdit, onDelete, onClose }) => {
     if (!position) return null;
 
     const { id, symbol, name, type, sellDate, expirationDate, priceSold, strikePrice, fees } = position;
@@ -107,6 +107,7 @@ const PositionDetails = ({ position, onEdit, onDelete }) => {
                         cursor: 'pointer',
                         transition: 'all 0.2s'
                     }}
+                    onClick={() => onClose(position)}
                 >
                     Close Position
                 </button>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TradeType } from '../model/TradeType';
 import { CompanyService } from '../services/http/CompanyService';
 
-function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
+function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, initialData, mode = 'NEW' }) {
     const [symbol, setSymbol] = useState('');
     const [filteredCompanies, setFilteredCompanies] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -22,13 +22,20 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
             setType(initialData.type === TradeType.COVERED_CALL ? 'Call' : 'Put');
             setStrikePrice(initialData.strikePrice);
             setExpirationDate(initialData.expirationDate);
-            setSellDate(initialData.sellDate);
-            setPremium(initialData.priceSold);
-            setFees(initialData.fees || 0);
+
+            if (mode === 'CLOSE') {
+                setSellDate(new Date().toISOString().split('T')[0]); // Default close date to today
+                setPremium(''); // User needs to enter buy back price
+                setFees(0.00); // Default close fees
+            } else {
+                setSellDate(initialData.sellDate);
+                setPremium(initialData.priceSold);
+                setFees(initialData.fees || 0);
+            }
         } else {
             resetFormState();
         }
-    }, [initialData, isOpen]);
+    }, [initialData, isOpen, mode]);
 
     useEffect(() => {
         const fetchCompanies = async () => {
@@ -78,7 +85,14 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
             fees: parseFloat(fees)
         };
 
-        if (initialData) {
+        if (mode === 'CLOSE') {
+            onClosePosition({
+                ...tradeData,
+                dateClosed: sellDate,
+                priceClosed: parseFloat(premium),
+                fees: parseFloat(fees)
+            });
+        } else if (initialData) {
             onUpdate(tradeData);
         } else {
             onSave(tradeData);
@@ -104,17 +118,21 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
 
     if (!isOpen) return null;
 
+    const isCloseMode = mode === 'CLOSE';
+
     return (
         <div className="new-trade-overlay" onClick={handleClose}>
             <div className="new-trade-sidebar" onClick={e => e.stopPropagation()}>
 
                 <div className="sidebar-header">
-                    <h2 className="sidebar-title">{initialData ? 'Edit Trade' : 'New Trade'}</h2>
+                    <h2 className="sidebar-title">
+                        {isCloseMode ? 'Close Position' : (initialData ? 'Edit Trade' : 'New Trade')}
+                    </h2>
                     <button onClick={handleClose} className="close-btn">&times;</button>
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    {/* Company Search */}
+                    {/* Company Search - Read Only in Close Mode */}
                     <div className="form-group">
                         <label className="form-label">Company</label>
                         <input
@@ -128,8 +146,9 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
                             placeholder="Search Symbol or Name"
                             className="form-input"
                             required
+                            disabled={isCloseMode}
                         />
-                        {showSuggestions && symbol && filteredCompanies.length > 0 && (
+                        {!isCloseMode && showSuggestions && symbol && filteredCompanies.length > 0 && (
                             <ul className="suggestions-list">
                                 {filteredCompanies.map(c => (
                                     <li key={c.symbol} onClick={() => handleSelectCompany(c)} className="suggestion-item">
@@ -140,28 +159,30 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
                         )}
                     </div>
 
-                    {/* Type Toggle */}
+                    {/* Type Toggle - Read Only in Close Mode */}
                     <div className="form-group">
                         <label className="form-label">Type</label>
                         <div className="toggle-group">
                             <button
                                 type="button"
-                                onClick={() => setType('Call')}
+                                onClick={() => !isCloseMode && setType('Call')}
                                 className={`toggle-btn call ${type === 'Call' ? 'active' : ''}`}
+                                disabled={isCloseMode}
                             >
                                 Call
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setType('Put')}
+                                onClick={() => !isCloseMode && setType('Put')}
                                 className={`toggle-btn put ${type === 'Put' ? 'active' : ''}`}
+                                disabled={isCloseMode}
                             >
                                 Put
                             </button>
                         </div>
                     </div>
 
-                    {/* Strike Price */}
+                    {/* Strike Price - Read Only in Close Mode */}
                     <div className="form-group">
                         <label className="form-label">Strike Price ($)</label>
                         <input
@@ -172,12 +193,13 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
                             placeholder="0.00"
                             className="form-input"
                             required
+                            disabled={isCloseMode}
                         />
                     </div>
 
-                    {/* Sell Date */}
+                    {/* Date Field */}
                     <div className="form-group">
-                        <label className="form-label">Sell Date</label>
+                        <label className="form-label">{isCloseMode ? 'Date Closed' : 'Sell Date'}</label>
                         <input
                             type="date"
                             value={sellDate}
@@ -187,7 +209,7 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
                         />
                     </div>
 
-                    {/* Expiration Date */}
+                    {/* Expiration Date - Hidden or Read Only in Close Mode? Let's keep it read only for context */}
                     <div className="form-group">
                         <label className="form-label">Expiration Date</label>
                         <input
@@ -196,12 +218,13 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
                             onChange={(e) => setExpirationDate(e.target.value)}
                             className="form-input"
                             required
+                            disabled={isCloseMode}
                         />
                     </div>
 
                     {/* Premium/Cost */}
                     <div className="form-group">
-                        <label className="form-label">Premium / Cost ($)</label>
+                        <label className="form-label">{isCloseMode ? 'Buy Back Cost ($)' : 'Premium / Cost ($)'}</label>
                         <input
                             type="number"
                             step="0.01"
@@ -240,7 +263,7 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, initialData }) {
                             type="submit"
                             className="btn-save"
                         >
-                            {initialData ? 'Update Trade' : 'Save Trade'}
+                            {isCloseMode ? 'Close Position' : (initialData ? 'Update Trade' : 'Save Trade')}
                         </button>
                     </div>
 

@@ -18,6 +18,7 @@ function App() {
   });
   const [isNewTradeOpen, setIsNewTradeOpen] = useState(false);
   const [editingPosition, setEditingPosition] = useState(null);
+  const [tradeMode, setTradeMode] = useState('NEW'); // 'NEW', 'EDIT', 'CLOSE'
 
   const handleSaveTrade = (newTrade) => {
     const newPositions = repo.save(newTrade);
@@ -34,7 +35,31 @@ function App() {
 
   const handleEditPosition = (position) => {
     setEditingPosition(position);
+    setTradeMode('EDIT');
     setIsNewTradeOpen(true);
+  };
+
+  const handleClosePositionRequest = (position) => {
+    setEditingPosition(position);
+    setTradeMode('CLOSE');
+    setIsNewTradeOpen(true);
+  };
+
+  const handleClosePosition = (closeData) => {
+    // Remove from open positions
+    const newPositions = repo.delete(closeData.id);
+    setPositions(newPositions);
+
+    // Record the close transaction
+    transactionRepo.save({
+      positionId: closeData.id,
+      action: TransactionAction.CLOSE,
+      data: closeData,
+      date: closeData.dateClosed
+    });
+
+    setIsNewTradeOpen(false);
+    setEditingPosition(null);
   };
 
   const handleUpdateTrade = (updatedTrade) => {
@@ -65,6 +90,7 @@ function App() {
     <div className="app-container">
       <Navbar onNewTradeClick={() => {
         setEditingPosition(null);
+        setTradeMode('NEW');
         setIsNewTradeOpen(true);
       }} />
 
@@ -73,10 +99,12 @@ function App() {
           positions={positions}
           onNewTradeClick={() => {
             setEditingPosition(null);
+            setTradeMode('NEW');
             setIsNewTradeOpen(true);
           }}
           onEditPosition={handleEditPosition}
           onDeletePosition={handleDeletePosition}
+          onClosePosition={handleClosePositionRequest}
         />
       </main>
 
@@ -88,7 +116,9 @@ function App() {
         }}
         onSave={handleSaveTrade}
         onUpdate={handleUpdateTrade}
+        onClosePosition={handleClosePosition}
         initialData={editingPosition}
+        mode={tradeMode}
       />
 
       <Footer />

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import OpenPositions from './OpenPositions';
 import PositionDetails from './PositionDetails';
 
-const Dashboard = ({ positions, onNewTradeClick, onEditPosition, onDeletePosition }) => {
+const Dashboard = ({ positions, onNewTradeClick, onEditPosition, onDeletePosition, onClosePosition }) => {
     const [selectedPositionId, setSelectedPositionId] = useState(null);
 
     const selectedPosition = positions.find(p => p.id === selectedPositionId);
@@ -28,6 +28,7 @@ const Dashboard = ({ positions, onNewTradeClick, onEditPosition, onDeletePositio
                         position={selectedPosition}
                         onEdit={onEditPosition}
                         onDelete={onDeletePosition}
+                        onClose={onClosePosition}
                     />
                 )}
             </div>
