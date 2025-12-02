@@ -6,9 +6,11 @@ import NewTradeForm from './components/NewTradeForm';
 
 import { LocalDataPersistence } from './services/util/LocalDataPersistence';
 import { PositionRepo } from './services/storage/PositionRepo';
+import { TransactionRepo, TransactionAction } from './services/storage/TransactionRepo';
 
 const persistence = new LocalDataPersistence();
 const repo = new PositionRepo(persistence);
+const transactionRepo = new TransactionRepo(persistence);
 
 function App() {
   const [positions, setPositions] = useState(() => {
@@ -19,6 +21,13 @@ function App() {
 
   const handleSaveTrade = (newTrade) => {
     const newPositions = repo.save(newTrade);
+    // Record the opening transaction
+    transactionRepo.save({
+      positionId: newTrade.id,
+      action: TransactionAction.OPEN,
+      data: newTrade,
+      date: newTrade.sellDate
+    });
     setPositions(newPositions);
     setIsNewTradeOpen(false);
   };
@@ -30,6 +39,13 @@ function App() {
 
   const handleUpdateTrade = (updatedTrade) => {
     const newPositions = repo.save(updatedTrade);
+    // Update the original transaction to reflect the correction
+    transactionRepo.save({
+      positionId: updatedTrade.id,
+      action: TransactionAction.OPEN,
+      data: updatedTrade,
+      date: updatedTrade.sellDate
+    });
     setPositions(newPositions);
     setIsNewTradeOpen(false);
     setEditingPosition(null);
@@ -37,6 +53,7 @@ function App() {
 
   const handleDeletePosition = (positionId) => {
     const newPositions = repo.delete(positionId);
+    transactionRepo.delete(positionId);
     setPositions(newPositions);
     if (editingPosition && editingPosition.id === positionId) {
       setEditingPosition(null);
