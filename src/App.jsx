@@ -27,7 +27,7 @@ function App() {
     <div className="app-container">
       <Navbar onNewTradeClick={() => setIsNewTradeOpen(true)} />
 
-      <main className="app-main" style={{ paddingTop: '2rem', paddingLeft: '2rem', paddingRight: '2rem' }}>
+      <main className="app-main" style={{ paddingTop: '2rem', paddingLeft: '2rem', paddingRight: '2rem', paddingBottom: '2rem' }}>
         <Dashboard positions={positions} onNewTradeClick={() => setIsNewTradeOpen(true)} />
       </main>
 

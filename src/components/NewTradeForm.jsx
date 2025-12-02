@@ -11,6 +11,7 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
     const [expirationDate, setExpirationDate] = useState('');
     const [sellDate, setSellDate] = useState(new Date().toISOString().split('T')[0]);
     const [premium, setPremium] = useState('');
+    const [fees, setFees] = useState(0.65);
 
     const [selectedCompany, setSelectedCompany] = useState(null);
 
@@ -58,7 +59,8 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
             sellDate,
             expirationDate,
             priceSold: parseFloat(premium),
-            strikePrice: parseFloat(strikePrice)
+            strikePrice: parseFloat(strikePrice),
+            fees: parseFloat(fees)
         };
         onSave(newTrade);
         resetForm();
@@ -72,6 +74,7 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
         setExpirationDate('');
         setSellDate(new Date().toISOString().split('T')[0]);
         setPremium('');
+        setFees(0.65);
         onClose();
     };
 
@@ -180,6 +183,20 @@ function NewTradeForm({ isOpen, onClose, onSave }) {
                             step="0.01"
                             value={premium}
                             onChange={(e) => setPremium(e.target.value)}
+                            placeholder="0.00"
+                            className="form-input"
+                            required
+                        />
+                    </div>
+
+                    {/* Fees */}
+                    <div className="form-group">
+                        <label className="form-label">Fees ($)</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            value={fees}
+                            onChange={(e) => setFees(e.target.value)}
                             placeholder="0.00"
                             className="form-input"
                             required
