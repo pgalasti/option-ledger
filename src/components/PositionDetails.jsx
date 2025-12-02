@@ -54,7 +54,17 @@ const PositionDetails = ({ position, onEdit, onDelete }) => {
                     <h2 style={{ margin: 0, fontSize: '1.5rem' }}>{name} ({symbol})</h2>
                 </div>
                 <div className="badges-container" style={{ justifySelf: 'end' }}>
-                    {isExpired && <span className="badge-expired">EXPIRED</span>}
+                    {isExpired && (
+                        <>
+                            <span className="badge-expired">EXPIRED</span>
+                            <span
+                                className="badge-action-needed"
+                                data-tooltip="Expiration date is passed. Mark the action taken on the option"
+                            >
+                                Action Needed
+                            </span>
+                        </>
+                    )}
                     <div className="position-type-badge">{type}</div>
                 </div>
             </div>
@@ -126,6 +136,21 @@ const PositionDetails = ({ position, onEdit, onDelete }) => {
                 >
                     Roll Position
                 </button>
+                {isExpired && (
+                    <button
+                        className="btn"
+                        style={{
+                            flex: 1,
+                            border: '1px solid #22c55e',
+                            background: 'rgba(34, 197, 94, 0.1)',
+                            color: '#22c55e',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        Expired Worthless
+                    </button>
+                )}
             </div>
         </div>
     );

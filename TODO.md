@@ -14,9 +14,16 @@
  - ~~Add in trade fees for opening a position.~~
  - ~~Add edit details for a position~~
  - ~~Add a 'Delete' position action in detail card~~
- - Add a "Expired Worthless" button to the position details card
+ - ~~Add a "Expired Worthless" button to the position details card~~
+ - Add a persistence ledger for adding a position
+ - Implement logic to close a position
+ - - Ensure Persisted
+ - Implement logic to mark a position as assigned
+ - - Ensure Persisted
+ - Implement logic to mark expired worthless for expired positions
+ - - Ensure Persisted
  - Logic to handle expired positions (click in open positions and specify how it was closed)
-  - History
+ - History
  - - Display Opens/Close
  - Analysis
  - - Implement Symbol Search Analysis
