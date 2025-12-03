@@ -76,6 +76,29 @@ function App() {
     setEditingPosition(null);
   };
 
+  const handleAssignPositionRequest = (position) => {
+    setEditingPosition(position);
+    setTradeMode('ASSIGN');
+    setIsNewTradeOpen(true);
+  };
+
+  const handleAssignPosition = (assignmentData) => {
+    // Remove from open positions
+    const newPositions = repo.delete(assignmentData.id);
+    setPositions(newPositions);
+
+    // Record the assigned transaction
+    transactionRepo.save({
+      positionId: assignmentData.id,
+      action: TransactionAction.ASSIGNED,
+      data: assignmentData,
+      date: assignmentData.dateAssigned || new Date().toISOString()
+    });
+
+    setEditingPosition(null);
+    setIsNewTradeOpen(false);
+  };
+
   const handleDeletePosition = (positionId) => {
     const newPositions = repo.delete(positionId);
     transactionRepo.delete(positionId);
@@ -105,6 +128,7 @@ function App() {
           onEditPosition={handleEditPosition}
           onDeletePosition={handleDeletePosition}
           onClosePosition={handleClosePositionRequest}
+          onAssignPosition={handleAssignPositionRequest}
         />
       </main>
 
@@ -117,6 +141,7 @@ function App() {
         onSave={handleSaveTrade}
         onUpdate={handleUpdateTrade}
         onClosePosition={handleClosePosition}
+        onAssign={handleAssignPosition}
         initialData={editingPosition}
         mode={tradeMode}
       />

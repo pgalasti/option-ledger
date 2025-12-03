@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TradeType } from '../model/TradeType';
 import { CompanyService } from '../services/http/CompanyService';
 
-function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, initialData, mode = 'NEW' }) {
+function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, onAssign, initialData, mode = 'NEW' }) {
     const [symbol, setSymbol] = useState('');
     const [filteredCompanies, setFilteredCompanies] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -15,6 +15,7 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
 
     const [selectedCompany, setSelectedCompany] = useState(null);
 
+    // May need to useReducer for this since it's getting complex.
     useEffect(() => {
         if (initialData) {
             setSymbol(initialData.symbol);
@@ -27,6 +28,10 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
                 setSellDate(new Date().toISOString().split('T')[0]); // Default close date to today
                 setPremium(''); // User needs to enter buy back price
                 setFees(0.00); // Default close fees
+            } else if (mode === 'ASSIGN') {
+                setSellDate(new Date().toISOString().split('T')[0]); // Default assignment date to today
+                setPremium(initialData.strikePrice); // Default assigned price to strike price
+                setFees(0.00); // Default assignment fees
             } else {
                 setSellDate(initialData.sellDate);
                 setPremium(initialData.priceSold);
@@ -92,6 +97,13 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
                 priceClosed: parseFloat(premium),
                 fees: parseFloat(fees)
             });
+        } else if (mode === 'ASSIGN') {
+            onAssign({
+                ...tradeData,
+                dateAssigned: sellDate,
+                assignedPrice: parseFloat(premium),
+                fees: parseFloat(fees)
+            });
         } else if (initialData) {
             onUpdate(tradeData);
         } else {
@@ -119,6 +131,32 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
     if (!isOpen) return null;
 
     const isCloseMode = mode === 'CLOSE';
+    const isAssignMode = mode === 'ASSIGN';
+    const isReadOnlyMode = isCloseMode || isAssignMode;
+
+    const getTitle = () => {
+        if (isCloseMode) return 'Close Position';
+        if (isAssignMode) return 'Mark Assigned';
+        return initialData ? 'Edit Trade' : 'New Trade';
+    };
+
+    const getDateLabel = () => {
+        if (isCloseMode) return 'Date Closed';
+        if (isAssignMode) return 'Assignment Date';
+        return 'Sell Date';
+    };
+
+    const getPriceLabel = () => {
+        if (isCloseMode) return 'Buy Back Cost ($)';
+        if (isAssignMode) return 'Assigned Price ($)';
+        return 'Premium / Cost ($)';
+    };
+
+    const getSubmitLabel = () => {
+        if (isCloseMode) return 'Close Position';
+        if (isAssignMode) return 'Mark Assigned';
+        return initialData ? 'Update Trade' : 'Save Trade';
+    };
 
     return (
         <div className="new-trade-overlay" onClick={handleClose}>
@@ -126,13 +164,13 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
 
                 <div className="sidebar-header">
                     <h2 className="sidebar-title">
-                        {isCloseMode ? 'Close Position' : (initialData ? 'Edit Trade' : 'New Trade')}
+                        {getTitle()}
                     </h2>
                     <button onClick={handleClose} className="close-btn">&times;</button>
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    {/* Company Search - Read Only in Close Mode */}
+                    {/* Company Search - Read Only in Close/Assign Mode */}
                     <div className="form-group">
                         <label className="form-label">Company</label>
                         <input
@@ -146,9 +184,9 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
                             placeholder="Search Symbol or Name"
                             className="form-input"
                             required
-                            disabled={isCloseMode}
+                            disabled={isReadOnlyMode}
                         />
-                        {!isCloseMode && showSuggestions && symbol && filteredCompanies.length > 0 && (
+                        {!isReadOnlyMode && showSuggestions && symbol && filteredCompanies.length > 0 && (
                             <ul className="suggestions-list">
                                 {filteredCompanies.map(c => (
                                     <li key={c.symbol} onClick={() => handleSelectCompany(c)} className="suggestion-item">
@@ -159,30 +197,30 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
                         )}
                     </div>
 
-                    {/* Type Toggle - Read Only in Close Mode */}
+                    {/* Type Toggle - Read Only in Close/Assign Mode */}
                     <div className="form-group">
                         <label className="form-label">Type</label>
                         <div className="toggle-group">
                             <button
                                 type="button"
-                                onClick={() => !isCloseMode && setType('Call')}
+                                onClick={() => !isReadOnlyMode && setType('Call')}
                                 className={`toggle-btn call ${type === 'Call' ? 'active' : ''}`}
-                                disabled={isCloseMode}
+                                disabled={isReadOnlyMode}
                             >
                                 Call
                             </button>
                             <button
                                 type="button"
-                                onClick={() => !isCloseMode && setType('Put')}
+                                onClick={() => !isReadOnlyMode && setType('Put')}
                                 className={`toggle-btn put ${type === 'Put' ? 'active' : ''}`}
-                                disabled={isCloseMode}
+                                disabled={isReadOnlyMode}
                             >
                                 Put
                             </button>
                         </div>
                     </div>
 
-                    {/* Strike Price - Read Only in Close Mode */}
+                    {/* Strike Price - Read Only in Close/Assign Mode */}
                     <div className="form-group">
                         <label className="form-label">Strike Price ($)</label>
                         <input
@@ -193,13 +231,13 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
                             placeholder="0.00"
                             className="form-input"
                             required
-                            disabled={isCloseMode}
+                            disabled={isReadOnlyMode}
                         />
                     </div>
 
                     {/* Date Field */}
                     <div className="form-group">
-                        <label className="form-label">{isCloseMode ? 'Date Closed' : 'Sell Date'}</label>
+                        <label className="form-label">{getDateLabel()}</label>
                         <input
                             type="date"
                             value={sellDate}
@@ -209,7 +247,7 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
                         />
                     </div>
 
-                    {/* Expiration Date - Hidden or Read Only in Close Mode? Let's keep it read only for context */}
+                    {/* Expiration Date - Read Only in Close/Assign Mode */}
                     <div className="form-group">
                         <label className="form-label">Expiration Date</label>
                         <input
@@ -218,13 +256,13 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
                             onChange={(e) => setExpirationDate(e.target.value)}
                             className="form-input"
                             required
-                            disabled={isCloseMode}
+                            disabled={isReadOnlyMode}
                         />
                     </div>
 
-                    {/* Premium/Cost */}
+                    {/* Premium/Cost/Price */}
                     <div className="form-group">
-                        <label className="form-label">{isCloseMode ? 'Buy Back Cost ($)' : 'Premium / Cost ($)'}</label>
+                        <label className="form-label">{getPriceLabel()}</label>
                         <input
                             type="number"
                             step="0.01"
@@ -263,7 +301,7 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, init
                             type="submit"
                             className="btn-save"
                         >
-                            {isCloseMode ? 'Close Position' : (initialData ? 'Update Trade' : 'Save Trade')}
+                            {getSubmitLabel()}
                         </button>
                     </div>
 

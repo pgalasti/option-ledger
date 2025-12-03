@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PositionDetails = ({ position, onEdit, onDelete, onClose }) => {
+const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign }) => {
     if (!position) return null;
 
     const { id, symbol, name, type, sellDate, expirationDate, priceSold, strikePrice, fees } = position;
@@ -14,6 +14,8 @@ const PositionDetails = ({ position, onEdit, onDelete, onClose }) => {
             onDelete(id);
         }
     };
+
+    const handleAssign = () => onAssign(position);
 
     return (
         <div className={`card ${isExpired ? 'expired' : ''}`} style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '1.5rem', borderColor: isExpired ? '#eb3434' : 'transparent' }}>
@@ -121,6 +123,7 @@ const PositionDetails = ({ position, onEdit, onDelete, onClose }) => {
                         cursor: 'pointer',
                         transition: 'all 0.2s'
                     }}
+                    onClick={handleAssign}
                 >
                     Mark Assigned
                 </button>
