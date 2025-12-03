@@ -39,7 +39,7 @@ const PositionSummary = ({ position, isSelected }) => {
                 </div>
                 <div className="detail-item">
                     <span className="detail-label">Contract Price</span>
-                    <span className="detail-value price">${priceSold.toFixed(2)}</span>
+                    <span className="detail-value price">${priceSold.toFixed(2)}{priceSold > 0 ? 'cr' : 'db'}   </span>
                 </div>
             </div>
         </div>
