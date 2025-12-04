@@ -109,6 +109,27 @@ function App() {
     }
   };
 
+  const handleExpirePosition = (position) => {
+    if (window.confirm(`Are you sure you want to mark the position for ${position.symbol} as expired worthless?`)) {
+      // Remove from open positions
+      const newPositions = repo.delete(position.id);
+      setPositions(newPositions);
+
+      // Record the expired transaction
+      transactionRepo.save({
+        positionId: position.id,
+        action: TransactionAction.EXPIRED,
+        data: position,
+        date: position.expirationDate || new Date().toISOString()
+      });
+
+      if (editingPosition && editingPosition.id === position.id) {
+        setEditingPosition(null);
+        setIsNewTradeOpen(false);
+      }
+    }
+  };
+
   return (
     <div className="app-container">
       <Navbar onNewTradeClick={() => {
@@ -129,6 +150,7 @@ function App() {
           onDeletePosition={handleDeletePosition}
           onClosePosition={handleClosePositionRequest}
           onAssignPosition={handleAssignPositionRequest}
+          onExpirePosition={handleExpirePosition}
         />
       </main>
 

@@ -19,10 +19,10 @@
  - ~~Add a persistence ledger for adding a position~~
  - ~~Implement logic to close a position~~
  - - ~~Ensure Persisted~~
- - Implement logic to mark a position as assigned
- - - Ensure Persisted
- - Implement logic to mark expired worthless for expired positions
- - - Ensure Persisted
+ - ~~Implement logic to mark a position as assigned~~
+ - - ~~Ensure Persisted~~
+ - ~~Implement logic to mark expired worthless for expired positions~~
+ - - ~~Ensure Persisted~~
  - Logic to handle expired positions (click in open positions and specify how it was closed)
  - History
  - - Display Opens/Close
@@ -32,6 +32,6 @@
  - - - Current Positions
  - - Implement Time Period Analysis
 - - - Profit/Loss
-- Technical -- Write a class repository wrappers around persistence instead of explicit persistence calls
+- ~~Technical -- Write a class repository wrappers around persistence instead of explicit persistence calls~~
 - Export to CSV feature
 - Clear Data

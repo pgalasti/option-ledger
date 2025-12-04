@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign }) => {
+const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign, onExpire }) => {
     if (!position) return null;
 
     const { id, symbol, name, type, sellDate, expirationDate, priceSold, strikePrice, fees } = position;
@@ -151,6 +151,7 @@ const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign }) => {
                             cursor: 'pointer',
                             transition: 'all 0.2s'
                         }}
+                        onClick={() => onExpire(position)}
                     >
                         Expired Worthless
                     </button>
