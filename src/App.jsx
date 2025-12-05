@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Dashboard from './components/Dashboard';
+import History from './components/History';
 import NewTradeForm from './components/NewTradeForm';
 
 import { LocalDataPersistence } from './services/util/LocalDataPersistence';
@@ -19,6 +20,7 @@ function App() {
   const [isNewTradeOpen, setIsNewTradeOpen] = useState(false);
   const [editingPosition, setEditingPosition] = useState(null);
   const [tradeMode, setTradeMode] = useState('NEW'); // 'NEW', 'EDIT', 'CLOSE'
+  const [currentView, setCurrentView] = useState('DASHBOARD'); // 'DASHBOARD', 'HISTORY'
 
   const handleSaveTrade = (newTrade) => {
     const newPositions = repo.save(newTrade);
@@ -132,26 +134,33 @@ function App() {
 
   return (
     <div className="app-container">
-      <Navbar onNewTradeClick={() => {
-        setEditingPosition(null);
-        setTradeMode('NEW');
-        setIsNewTradeOpen(true);
-      }} />
+      <Navbar
+        onNewTradeClick={() => {
+          setEditingPosition(null);
+          setTradeMode('NEW');
+          setIsNewTradeOpen(true);
+        }}
+        setCurrentView={setCurrentView}
+      />
 
       <main className="app-main" style={{ paddingTop: '2rem', paddingLeft: '2rem', paddingRight: '2rem', paddingBottom: '2rem' }}>
-        <Dashboard
-          positions={positions}
-          onNewTradeClick={() => {
-            setEditingPosition(null);
-            setTradeMode('NEW');
-            setIsNewTradeOpen(true);
-          }}
-          onEditPosition={handleEditPosition}
-          onDeletePosition={handleDeletePosition}
-          onClosePosition={handleClosePositionRequest}
-          onAssignPosition={handleAssignPositionRequest}
-          onExpirePosition={handleExpirePosition}
-        />
+        {currentView === 'DASHBOARD' ? (
+          <Dashboard
+            positions={positions}
+            onNewTradeClick={() => {
+              setEditingPosition(null);
+              setTradeMode('NEW');
+              setIsNewTradeOpen(true);
+            }}
+            onEditPosition={handleEditPosition}
+            onDeletePosition={handleDeletePosition}
+            onClosePosition={handleClosePositionRequest}
+            onAssignPosition={handleAssignPositionRequest}
+            onExpirePosition={handleExpirePosition}
+          />
+        ) : (
+          <History transactionRepo={transactionRepo} />
+        )}
       </main>
 
       <NewTradeForm
