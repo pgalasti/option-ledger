@@ -8,7 +8,7 @@ const Navbar = ({ onNewTradeClick, setCurrentView }) => {
             </div>
             <div className="nav-links">
                 <a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('HISTORY'); }}>History</a>
-                <a href="#">Analysis</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('ANALYSIS'); }}>Analysis</a>
                 <a href="#">Export</a>
                 <a className="warning" href="#">Clear Data</a>
             </div>

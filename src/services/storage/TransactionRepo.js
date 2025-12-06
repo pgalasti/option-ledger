@@ -1,4 +1,5 @@
 import { Repo } from "./Repo";
+import { Criteria } from "./Criteria";
 
 export const TransactionAction = {
     OPEN: 'OPEN',
@@ -16,8 +17,16 @@ export class TransactionRepo extends Repo {
     }
 
     load(criteria) {
-        // TODO: Implement criteria for specific lookup at some point.
-        return this.persistence.load(this.TRANSACTIONS_KEY) || [];
+        let results = this.persistence.load(this.TRANSACTIONS_KEY) || [];
+        if (!criteria) {
+            return results;
+        }
+
+        results = results.filter(t => criteria.Fields.every(f => {
+            const value = f.fieldName.split('.').reduce((o, i) => (o ? o[i] : undefined), t);
+            return value === f.value;
+        }));
+        return results;
     }
 
     save({ positionId, action, data, date }) {

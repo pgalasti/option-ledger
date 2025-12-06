@@ -4,6 +4,7 @@ import Footer from './components/Footer';
 import Dashboard from './components/Dashboard';
 import History from './components/History';
 import NewTradeForm from './components/NewTradeForm';
+import Analysis from './components/Analysis';
 
 import { LocalDataPersistence } from './services/util/LocalDataPersistence';
 import { PositionRepo } from './services/storage/PositionRepo';
@@ -158,8 +159,10 @@ function App() {
             onAssignPosition={handleAssignPositionRequest}
             onExpirePosition={handleExpirePosition}
           />
-        ) : (
+        ) : currentView === 'HISTORY' ? (
           <History transactionRepo={transactionRepo} />
+        ) : (
+          <Analysis transactionRepo={transactionRepo} />
         )}
       </main>
 
