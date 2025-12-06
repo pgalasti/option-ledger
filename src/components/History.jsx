@@ -22,9 +22,6 @@ const History = ({ transactionRepo }) => {
                 break;
             case TransactionAction.ASSIGNED:
                 price = data.assignedPrice;
-                // Put assignment = Buying shares (Debit)
-                // Call assignment = Selling shares (Credit)
-                // Note: data.type stores 'Covered Call' or 'Short Put'
                 type = data.type === 'Short Put' ? 'db' : 'cr';
                 break;
             case TransactionAction.EXPIRED:

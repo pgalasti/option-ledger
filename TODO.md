@@ -35,3 +35,6 @@
 - ~~Technical -- Write a class repository wrappers around persistence instead of explicit persistence calls~~
 - Export to CSV feature
 - Clear Data
+- Write a class to manage the state of history
+- Write a class to manage the state of analysis
+- Write a class to manage the state of open positions
