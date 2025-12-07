@@ -24,17 +24,18 @@
  - ~~Implement logic to mark expired worthless for expired positions~~
  - - ~~Ensure Persisted~~
  - Logic to handle expired positions (click in open positions and specify how it was closed)
- - History
- - - Display Opens/Close
+ - ~~History~~
+ - - ~~Display Opens/Close~~
  - Analysis
- - - Implement Symbol Search Analysis
- - - - Profit/Loss
+ - - ~~Implement Symbol Search Analysis~~
+ - - - ~~Profit/Loss~~
  - - - Current Positions
- - - Implement Time Period Analysis
-- - - Profit/Loss
-- ~~Technical -- Write a class repository wrappers around persistence instead of explicit persistence calls~~
-- Export to CSV feature
-- Clear Data
-- Write a class to manage the state of history
-- Write a class to manage the state of analysis
+ - - ~~Implement Time Period Analysis~~ Sorta
+ - - - ~~Profit/Loss~~
+ - ~~Technical -- Write a class repository wrappers around persistence instead of explicit persistence calls~~
+ - Filter on history by symbol
+ - Export to CSV feature
+ - Clear Data
+ - Write a class to manage the state of history
+ - Write a class to manage the state of analysis
 - Write a class to manage the state of open positions

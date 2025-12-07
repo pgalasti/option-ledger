@@ -3,6 +3,7 @@ import { TransactionAction } from '../services/storage/TransactionRepo';
 
 const History = ({ transactionRepo }) => {
     const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
+    const [filterSymbol, setFilterSymbol] = useState('');
 
     const transactions = transactionRepo.load();
 
@@ -35,6 +36,13 @@ const History = ({ transactionRepo }) => {
 
     const sortedTransactions = useMemo(() => {
         let sortableItems = [...transactions];
+
+        if (filterSymbol) {
+            sortableItems = sortableItems.filter(t =>
+                t.data.symbol.toLowerCase().includes(filterSymbol.toLowerCase())
+            );
+        }
+
         if (sortConfig !== null) {
             sortableItems.sort((a, b) => {
                 let aValue, bValue;
@@ -62,7 +70,7 @@ const History = ({ transactionRepo }) => {
             });
         }
         return sortableItems;
-    }, [transactions, sortConfig]);
+    }, [transactions, sortConfig, filterSymbol]);
 
     const requestSort = (key) => {
         let direction = 'asc';
@@ -99,8 +107,18 @@ const History = ({ transactionRepo }) => {
 
     return (
         <div className="dashboard-container">
-            <div className="dashboard-header">
+            <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h1>Transaction History</h1>
+                <div>
+                    <input
+                        type="text"
+                        placeholder="Filter by Symbol"
+                        value={filterSymbol}
+                        onChange={(e) => setFilterSymbol(e.target.value)}
+                        className="form-input"
+                        style={{ maxWidth: '200px', padding: '0.5rem' }}
+                    />
+                </div>
             </div>
 
             <div className="glass-panel" style={{ padding: '1rem', overflowX: 'auto' }}>
