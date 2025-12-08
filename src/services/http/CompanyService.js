@@ -24,5 +24,26 @@ export const CompanyService = {
             console.error("Error fetching companies:", error);
             return [];
         }
+    },
+
+    getQuote: async (symbol) => {
+        if (!symbol) return null;
+
+        try {
+            // Use chart endpoint as it is often more reliable for public access
+            const response = await fetch(`https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`);
+            const data = await response.json();
+
+            if (data.chart && data.chart.result && data.chart.result.length > 0) {
+                const meta = data.chart.result[0].meta;
+                return {
+                    regularMarketPrice: meta.regularMarketPrice
+                };
+            }
+            return null;
+        } catch (error) {
+            console.error("Error fetching quote:", error);
+            return null;
+        }
     }
 };

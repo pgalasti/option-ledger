@@ -64,10 +64,16 @@ function NewTradeForm({ isOpen, onClose, onSave, onUpdate, onClosePosition, onAs
         return () => clearTimeout(timeoutId);
     }, [symbol]);
 
-    const handleSelectCompany = (company) => {
+    const handleSelectCompany = async (company) => {
         setSymbol(company.symbol);
         setSelectedCompany(company);
         setShowSuggestions(false);
+
+        // Fetch current price to populate strike price
+        const quote = await CompanyService.getQuote(company.symbol);
+        if (quote && quote.regularMarketPrice) {
+            setStrikePrice(Math.round(quote.regularMarketPrice).toFixed(2));
+        }
     };
 
     const handleSubmit = (e) => {
