@@ -26,6 +26,11 @@ export class PositionRepo extends Repo {
     }
 
     delete(id) {
+        if (id === '*') {
+            this.persistence.delete(this.POSITIONS_KEY);
+            return [];
+        }
+
         const positions = this.load();
         const newPositions = positions.filter(p => p.id !== id);
         this.persistence.save(this.POSITIONS_KEY, newPositions);

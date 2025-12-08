@@ -55,6 +55,10 @@ export class TransactionRepo extends Repo {
     }
 
     delete(positionId) {
+        if (positionId === '*') {
+            this.persistence.delete(this.TRANSACTIONS_KEY);
+            return [];
+        }
         const transactions = this.load();
         const newTransactions = transactions.filter(t => t.positionId !== positionId);
         this.persistence.save(this.TRANSACTIONS_KEY, newTransactions);

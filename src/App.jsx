@@ -133,6 +133,17 @@ function App() {
     }
   };
 
+  const handleClearData = () => {
+    if (window.confirm("Are you sure you want to clear ALL data? This action cannot be undone.")) {
+      repo.delete('*');
+      transactionRepo.delete('*');
+      setPositions([]);
+      setEditingPosition(null);
+      setIsNewTradeOpen(false);
+      alert("All data has been cleared.");
+    }
+  };
+
   return (
     <div className="app-container">
       <Navbar
@@ -142,6 +153,7 @@ function App() {
           setIsNewTradeOpen(true);
         }}
         setCurrentView={setCurrentView}
+        onClearData={handleClearData}
       />
 
       <main className="app-main" style={{ paddingTop: '2rem', paddingLeft: '2rem', paddingRight: '2rem', paddingBottom: '2rem' }}>
