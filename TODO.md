@@ -33,9 +33,10 @@
  - - ~~Implement Time Period Analysis~~ Sorta
  - - - ~~Profit/Loss~~
  - ~~Technical -- Write a class repository wrappers around persistence instead of explicit persistence calls~~
- - Filter on history by symbol
+ - ~~Filter on history by symbol~~
+ - ~~Handle Roll operations~~
  - Export to CSV feature
- - Clear Data
+ - ~~Clear Data~~
  - Write a class to manage the state of history
  - Write a class to manage the state of analysis
 - Write a class to manage the state of open positions

@@ -6,18 +6,25 @@ export const CompanyService = {
         if (!query) return [];
 
         try {
-            // corsproxy.io should be good enough for now.
-            // Maybe I can have a back-end service to handle the fetch in the future.
+            // Reverting to corsproxy.io and query1 as requested
             const response = await fetch(`https://corsproxy.io/?https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}`);
+
+            if (!response.ok) {
+                throw new Error(`Search failed with status: ${response.status}`);
+            }
+
             const data = await response.json();
+            console.log("Company search response:", data);
 
             if (data.quotes) {
-                return data.quotes
+                const results = data.quotes
                     .filter(quote => quote.quoteType === 'EQUITY' || quote.quoteType === 'ETF')
                     .map(quote => ({
                         symbol: quote.symbol,
                         name: quote.shortname || quote.longname || quote.symbol
                     }));
+                console.log("Filtered results:", results);
+                return results;
             }
             return [];
         } catch (error) {
@@ -30,7 +37,6 @@ export const CompanyService = {
         if (!symbol) return null;
 
         try {
-            // Use chart endpoint as it is often more reliable for public access
             const response = await fetch(`https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`);
             const data = await response.json();
 

@@ -133,6 +133,61 @@ function App() {
     }
   };
 
+  const handleRollPositionRequest = (position) => {
+    setEditingPosition(position);
+    setTradeMode('ROLL');
+    setIsNewTradeOpen(true);
+  };
+
+  const handleRollPosition = (rollData) => {
+    // 1. Close the old position
+    const oldPosition = positions.find(p => p.id === rollData.oldPositionId);
+    let newPositions = repo.delete(rollData.oldPositionId);
+
+    // Record the ROLL transaction for the old position
+    transactionRepo.save({
+      positionId: rollData.oldPositionId,
+      action: TransactionAction.ROLL,
+      data: {
+        ...oldPosition,
+        priceClosed: rollData.closePrice,
+        dateClosed: rollData.closeDate,
+        fees: rollData.closeFees
+      },
+      date: rollData.closeDate
+    });
+
+    // 2. Open the new position
+    const oldCumulative = oldPosition.cumulativePremium !== undefined
+      ? oldPosition.cumulativePremium
+      : ((oldPosition.priceSold * 100) - (oldPosition.fees || 0));
+
+    const closeDebit = (rollData.closePrice * 100) + (rollData.closeFees || 0);
+    const openCredit = (rollData.newPosition.priceSold * 100) - (rollData.newPosition.fees || 0);
+    const newCumulative = oldCumulative - closeDebit + openCredit;
+
+    const newPosition = {
+      ...rollData.newPosition,
+      id: Date.now(), // Generate new ID
+      rollCount: (oldPosition.rollCount || 0) + 1,
+      cumulativePremium: newCumulative
+    };
+
+    newPositions = repo.save(newPosition);
+    setPositions(newPositions);
+
+    // Record the OPEN transaction for the new position
+    transactionRepo.save({
+      positionId: newPosition.id,
+      action: TransactionAction.OPEN,
+      data: newPosition,
+      date: newPosition.sellDate
+    });
+
+    setEditingPosition(null);
+    setIsNewTradeOpen(false);
+  };
+
   const handleClearData = () => {
     if (window.confirm("Are you sure you want to clear ALL data? This action cannot be undone.")) {
       repo.delete('*');
@@ -170,11 +225,12 @@ function App() {
             onClosePosition={handleClosePositionRequest}
             onAssignPosition={handleAssignPositionRequest}
             onExpirePosition={handleExpirePosition}
+            onRollPosition={handleRollPositionRequest}
           />
         ) : currentView === 'HISTORY' ? (
           <History transactionRepo={transactionRepo} />
         ) : (
-          <Analysis transactionRepo={transactionRepo} />
+          <Analysis transactionRepo={transactionRepo} positions={positions} />
         )}
       </main>
 
@@ -188,6 +244,7 @@ function App() {
         onUpdate={handleUpdateTrade}
         onClosePosition={handleClosePosition}
         onAssign={handleAssignPosition}
+        onRoll={handleRollPosition}
         initialData={editingPosition}
         mode={tradeMode}
       />

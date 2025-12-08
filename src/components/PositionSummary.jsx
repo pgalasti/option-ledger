@@ -18,6 +18,11 @@ const PositionSummary = ({ position, isSelected }) => {
                     <span className="position-name">{name}</span>
                 </div>
                 <div className="badges-container">
+                    {position.rollCount > 0 && (
+                        <span className="badge-action-needed" style={{ borderColor: '#eab308', color: '#eab308', background: 'rgba(234, 179, 8, 0.1)', fontSize: '0.6rem', padding: '0.1rem 0.3rem' }}>
+                            Rolled #{position.rollCount}
+                        </span>
+                    )}
                     {isExpired && <span className="badge-expired">EXPIRED</span>}
                     <div className="position-type-badge">{type}</div>
                 </div>

@@ -25,6 +25,7 @@ const AnalysisMetrics = ({ metrics }) => {
 
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.5rem', width: '100%' }}>
+            <MetricCard label="Open Positions" value={metrics.openPositionsCount || 0} />
             <MetricCard label="Total Trades" value={tradeCount} subValue={`${callsCount} Calls / ${putsCount} Puts`} />
             <MetricCard label="Total P/L" value={totalPL} isCurrency={true} />
             <MetricCard label="Repurchased" value={repurchasedCount || 0} />

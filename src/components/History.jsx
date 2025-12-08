@@ -28,6 +28,10 @@ const History = ({ transactionRepo }) => {
             case TransactionAction.EXPIRED:
                 price = 0;
                 break;
+            case TransactionAction.ROLL:
+                price = data.priceClosed;
+                type = 'db';
+                break;
             default:
                 price = 0;
         }
@@ -85,7 +89,7 @@ const History = ({ transactionRepo }) => {
         return sortConfig.direction === 'asc' ? ' ▲' : ' ▼';
     };
 
-    const formatAction = (action) => {
+    const formatAction = (action, data) => {
         switch (action) {
             case TransactionAction.OPEN:
                 return 'STO';
@@ -95,6 +99,8 @@ const History = ({ transactionRepo }) => {
                 return 'Assigned';
             case TransactionAction.EXPIRED:
                 return 'Expired';
+            case TransactionAction.ROLL:
+                return `BTC (Rolled #${(data.rollCount || 0) + 1})`;
             default:
                 return action;
         }
@@ -169,7 +175,7 @@ const History = ({ transactionRepo }) => {
                                                 {t.data.type === 'Covered Call' ? 'Call' : 'Put'}
                                             </span>
                                         </td>
-                                        <td style={{ padding: '1rem' }}>{formatAction(t.action)}</td>
+                                        <td style={{ padding: '1rem' }}>{formatAction(t.action, t.data)}</td>
                                         <td style={{ padding: '1rem' }}>1</td>
                                         <td style={{ padding: '1rem' }}>
                                             ${priceData.value.toFixed(2)}

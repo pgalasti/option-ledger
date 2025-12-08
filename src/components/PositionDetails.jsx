@@ -1,9 +1,10 @@
 import React from 'react';
 
-const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign, onExpire }) => {
+const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign, onExpire, onRoll }) => {
+    console.log("PositionDetails position:", position);
     if (!position) return null;
 
-    const { id, symbol, name, type, sellDate, expirationDate, priceSold, strikePrice, fees } = position;
+    const { id, symbol, name, type, sellDate, expirationDate, priceSold, strikePrice, fees, rollCount } = position;
     const totalPremium = ((priceSold * 100) - (fees || 0)).toFixed(2);
 
     const daysUntil = Math.floor((new Date(expirationDate) - new Date()) / (1000 * 60 * 60 * 24));
@@ -16,6 +17,7 @@ const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign, onExpi
     };
 
     const handleAssign = () => onAssign(position);
+    const handleRoll = () => onRoll(position);
 
     return (
         <div className={`card ${isExpired ? 'expired' : ''}`} style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '1.5rem', borderColor: isExpired ? '#eb3434' : 'transparent' }}>
@@ -56,6 +58,11 @@ const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign, onExpi
                     <h2 style={{ margin: 0, fontSize: '1.5rem' }}>{name} ({symbol})</h2>
                 </div>
                 <div className="badges-container" style={{ justifySelf: 'end' }}>
+                    {rollCount > 0 && (
+                        <span className="badge-action-needed" style={{ borderColor: '#eab308', color: '#eab308', background: 'rgba(234, 179, 8, 0.1)' }}>
+                            Rolled #{rollCount}
+                        </span>
+                    )}
                     {isExpired && (
                         <>
                             <span className="badge-expired">EXPIRED</span>
@@ -96,6 +103,15 @@ const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign, onExpi
                     <div style={{ fontSize: '0.9rem', color: '#888', marginBottom: '0.25rem' }}>Total Premium</div>
                     <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--color-accent-green)' }}>${totalPremium}</div>
                 </div>
+
+                {rollCount > 0 && position.cumulativePremium !== undefined && (
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '0.9rem', color: '#888', marginBottom: '0.25rem' }}>Net Premium (All Rolls)</div>
+                        <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: position.cumulativePremium >= 0 ? 'var(--color-accent-green)' : '#ef4444' }}>
+                            ${position.cumulativePremium.toFixed(2)}
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginTop: '2rem' }}>
@@ -131,12 +147,13 @@ const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign, onExpi
                     className="btn"
                     style={{
                         flex: 1,
-                        border: '1px solid #22c55e',
-                        background: 'rgba(34, 197, 94, 0.1)',
-                        color: '#22c55e',
+                        border: '1px solid #eab308',
+                        background: 'rgba(234, 179, 8, 0.1)',
+                        color: '#eab308',
                         cursor: 'pointer',
                         transition: 'all 0.2s'
                     }}
+                    onClick={handleRoll}
                 >
                     Roll Position
                 </button>
