@@ -1,9 +1,10 @@
 import React from 'react';
+import { parseDate } from '../services/util/DateUtils';
 
 const PositionSummary = ({ position, isSelected }) => {
-    const { symbol, name, type, sellDate, expirationDate, priceSold, strikePrice } = position;
+    const { symbol, name, type, sellDate, expirationDate, priceSold, strikePrice, fees, rollCount } = position;
 
-    const daysUntil = Math.floor((new Date(expirationDate) - new Date()) / (1000 * 60 * 60 * 24));
+    const daysUntil = Math.floor((parseDate(expirationDate) - new Date()) / (1000 * 60 * 60 * 24));
     const isExpired = daysUntil < 0;
 
     const strikeSuffix = type.toLowerCase().includes('call') ? 'C' : 'P';

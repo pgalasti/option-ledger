@@ -1,4 +1,5 @@
 import React from 'react';
+import { parseDate } from '../services/util/DateUtils';
 
 const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign, onExpire, onRoll }) => {
     console.log("PositionDetails position:", position);
@@ -7,7 +8,7 @@ const PositionDetails = ({ position, onEdit, onDelete, onClose, onAssign, onExpi
     const { id, symbol, name, type, sellDate, expirationDate, priceSold, strikePrice, fees, rollCount } = position;
     const totalPremium = ((priceSold * 100) - (fees || 0)).toFixed(2);
 
-    const daysUntil = Math.floor((new Date(expirationDate) - new Date()) / (1000 * 60 * 60 * 24));
+    const daysUntil = Math.floor((parseDate(expirationDate) - new Date()) / (1000 * 60 * 60 * 24));
     const isExpired = daysUntil < 0;
 
     const handleDelete = () => {

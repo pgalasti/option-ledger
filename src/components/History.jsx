@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { TransactionAction } from '../services/storage/TransactionRepo';
+import { parseDate } from '../services/util/DateUtils';
 
 const History = ({ transactionRepo }) => {
     const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
@@ -55,8 +56,8 @@ const History = ({ transactionRepo }) => {
                     aValue = a.data.symbol;
                     bValue = b.data.symbol;
                 } else if (sortConfig.key === 'date') {
-                    aValue = new Date(a.date);
-                    bValue = new Date(b.date);
+                    aValue = parseDate(a.date);
+                    bValue = parseDate(b.date);
                 } else if (sortConfig.key === 'price') {
                     aValue = getPrice(a).value;
                     bValue = getPrice(b).value;
@@ -108,7 +109,7 @@ const History = ({ transactionRepo }) => {
 
     const formatDate = (dateString) => {
         if (!dateString) return '';
-        return new Date(dateString).toLocaleDateString();
+        return parseDate(dateString).toLocaleDateString();
     };
 
     return (

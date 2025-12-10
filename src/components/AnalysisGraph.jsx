@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import { parseDate } from '../services/util/DateUtils';
 
 const AnalysisGraph = ({ data }) => {
     const [timeRange, setTimeRange] = useState('1Y'); // Just going to default it to one year
@@ -17,7 +18,7 @@ const AnalysisGraph = ({ data }) => {
             if (data.length === 0) {
                 startDate.setFullYear(now.getFullYear() - 1); // Default to 1Y if no data. Maybe add a message later?
             } else {
-                const minDate = new Date(Math.min(...data.map(d => new Date(d.date))));
+                const minDate = new Date(Math.min(...data.map(d => parseDate(d.date))));
                 startDate = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
             }
         } else {
@@ -40,7 +41,7 @@ const AnalysisGraph = ({ data }) => {
 
         const monthlyData = {};
         data.forEach(item => {
-            const date = new Date(item.date);
+            const date = parseDate(item.date);
             if (date >= startDate) {
                 const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
                 monthlyData[key] = (monthlyData[key] || 0) + item.pl;
